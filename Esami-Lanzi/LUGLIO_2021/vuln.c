@@ -6,7 +6,7 @@ int flag = 0;
 char str3[20] = "    ";
 char str1[20];
 char str2[] = "Congratulations you win";
-char stringa[260];
+char stringa[260]; //si vuole usare questa: il p va sovrascritto con l'indirizzo di questa stringa
 
 void join_string(char *dst, char *src) {
 
@@ -64,9 +64,10 @@ void echo() {
 	printf("buffer1:%p\n", buffer1);
 	printf("Enter some text:\n");
 
-	gets(buffer1);
-	strcpy(p, buffer);
+	gets(buffer1); //prende in input buffer1
+	strcpy(p, buffer); //qui si mette buffer in p --> bisogna riempire buffer1 talmente che la parte che finisce su buffer e si mette su p e` cio` che vogliamo (in particolare si modifica p per puntare a una variabile in cui si mette lo shellcode)
 
+	//qui pero` vengono azzerati i buffer
 	for(i=0; i<=60; i++) {
 		buffer[i] = 0;
 		buffer1[i] = 0;
