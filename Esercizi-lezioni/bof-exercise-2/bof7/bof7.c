@@ -56,7 +56,8 @@ int main(int argc, char *argv[]){
 	}
 	str[i] = 0;
 	
-	if (fp != win && fp != NULL) fp() ; //qui viene invocata la funzione contenuta in fp (function pointer): il nostro scopo e` riuscire a inserire a chiamare win ma non posso inserire in fp l'indirizzo di win perche` non entrerebbe nell'if!!! allora come? devo entrare in print_function ed entrare nell'else per sfruttare la strcpy e fare overflow MA quindi prima devo riuscire a disabilitare il security check
+	if (fp != win && fp != NULL) fp() ; 
+//qui viene invocata la funzione contenuta in fp (function pointer): il nostro scopo e` riuscire a inserire a chiamare win ma non posso inserire in fp l'indirizzo di win perche` non entrerebbe nell'if!!! allora come? devo entrare in print_function ed entrare nell'else per sfruttare la strcpy e fare overflow MA quindi prima devo riuscire a disabilitare il security check
 	printf("Security Check:%d\n", security_check) ;
 
 	/* print function name */
