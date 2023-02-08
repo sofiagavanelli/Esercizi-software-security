@@ -1,0 +1,2 @@
+python exploit-bof1.py
+cat badfile - | ./bof1

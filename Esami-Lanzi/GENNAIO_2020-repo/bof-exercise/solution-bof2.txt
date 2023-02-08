@@ -1,0 +1,1 @@
+cat badfile | ./bof2 0
