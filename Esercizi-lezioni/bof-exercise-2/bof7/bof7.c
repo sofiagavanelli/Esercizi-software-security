@@ -36,26 +36,27 @@ void print_function(char *src){
 
 }
 
-
+//scopo: chiamare win()
 
 int main(int argc, char *argv[]){
 
  
  int (*fp)() = NULL; //def di un puntatore a funzione
  char str[260] ;
+
  short check =0; 
  int i ;
  char index = 0;
 
-        security_check = enable_security_check() ; //ritorna 1 quindi mette a 1 sec_check
+        security_check = enable_security_check() ; //ritorna 1 quindi mette a 1 sec_check (var globale)
 
-	for(i = 0; i < 268; i++) { //nella versione dell'anno scorso e` 272
+	for(i = 0; i < 268; i++) { 
 	  str[i] = getchar();
 	  if(str[i] == 10) break;
 	}
 	str[i] = 0;
 	
-	if (fp != win && fp != NULL) fp() ;
+	if (fp != win && fp != NULL) fp() ; //qui viene invocata la funzione contenuta in fp (function pointer): il nostro scopo e` riuscire a inserire a chiamare win ma non posso inserire in fp l'indirizzo di win perche` non entrerebbe nell'if!!! allora come? devo entrare in print_function ed entrare nell'else per sfruttare la strcpy e fare overflow MA quindi prima devo riuscire a disabilitare il security check
 	printf("Security Check:%d\n", security_check) ;
 
 	/* print function name */
@@ -64,6 +65,8 @@ int main(int argc, char *argv[]){
 	exit(0) ;
  	printf("Never return from main\n") ;	
 }
+
+
 
 
 
