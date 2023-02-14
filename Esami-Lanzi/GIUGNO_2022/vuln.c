@@ -45,7 +45,7 @@ void get_input() {
 
 	//partendo dal basso per modificare buf bisogna fare overflow su buffer1 (20) e poi esaurire anche buffer (128) quindi in totale minimo 148 caratteri
 
-	gets(buffer); //si inserisce qualcosa per andare oltre
+	gets(buffer); //si inserisce qualcosa per andare oltre nel caso della shell, nel caso della stampa si usa
 
 	if(buf != NULL){
 		strcpy(buf, buffer);
