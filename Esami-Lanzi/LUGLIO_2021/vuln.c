@@ -28,7 +28,7 @@ void join_string(char *dst, char *src) {
 
 void lazy() {
 
-	printf("lazy: %s\n");
+	printf("lazy: %s\n", str1);
 
 }
 
