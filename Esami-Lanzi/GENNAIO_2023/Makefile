@@ -1,4 +1,4 @@
-OV = rop-exam
+OV = bof rop-exam
 PROGRAMS = $(OV)
 CFLAGS += -no-pie -m32 -mpreferred-stack-boundary=2 -fno-stack-protector -zexecstack
 
