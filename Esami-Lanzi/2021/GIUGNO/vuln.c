@@ -4,6 +4,9 @@
 #include <string.h>
 
 
+//NOTA: e` uguale a giugno 2022
+
+
 char string[200] ;
 int flagvalue ;
 
