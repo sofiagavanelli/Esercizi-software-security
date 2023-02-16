@@ -8,4 +8,3 @@ CFLAGS += -no-pie -m32 -mpreferred-stack-boundary=2 -fno-stack-protector -zexecs
 all: $(PROGRAMS)
 clean:
 	rm -f $(PROGRAMS)
-
