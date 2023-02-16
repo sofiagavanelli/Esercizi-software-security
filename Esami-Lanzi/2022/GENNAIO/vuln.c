@@ -13,7 +13,7 @@ int vuln()
 	char buf[200];
 
 	printf("vuln\n") ;
-	//printf("10: %c , 11: %c , 12: %c\n", string[10], string[11], string[12]);
+	printf("10: %c , 11: %c , 12: %c\n", string[10], string[11], string[12]);
 	
 	if((string[10]=='a') && (string[11]=='b') && (string[12]=='c')){
 
