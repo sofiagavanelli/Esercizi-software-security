@@ -33,10 +33,11 @@ int vuln()
 
 int flag(){
 
+	//printf("dentro flag\n");
 
 	if (flagvalue == 0xdeadfeef)
-	    
-		printf("you Win!!!!") ;
+	    //lo "\n" non c'era nella versione del prof:andava in seg fault anche con l'exploit giusto
+		printf("you Win!!!!\n") ;
 	
 	
 	else 
